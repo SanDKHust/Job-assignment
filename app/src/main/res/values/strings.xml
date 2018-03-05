@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Job Assignment</string>
+    <string name="login">Login</string>
+    <string name="Password">Password</string>
+    <string name="go">Go</string>
+    <string name="forgot_your_password">Forgot your password</string>
+    <string name="register">REGISTER</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="email">Email</string>
+    <string name="display_name">Display name</string>
+    <string name="remember_pass">Remember login</string>
+    <string-array name="tabs_title">
+        <item>Person</item>
+        <item>Group</item>
+        <item>Information</item>
+    </string-array>
+</resources>

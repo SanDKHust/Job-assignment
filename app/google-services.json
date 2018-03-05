@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "722976452163",
+    "firebase_url": "https://job-assignment.firebaseio.com",
+    "project_id": "job-assignment",
+    "storage_bucket": "job-assignment.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:722976452163:android:a8e329e28ee76eeb",
+        "android_client_info": {
+          "package_name": "vn.edu.hust.soict.khacsan.jobassignment"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "722976452163-gandr31pdn0ok81cjv9093a38rccnacj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.edu.hust.soict.khacsan.jobassignment",
+            "certificate_hash": "23e0e2978ba023f290a5e096892d50ee5a60c32e"
+          }
+        },
+        {
+          "client_id": "722976452163-k7jrsebvcee103l53d1a52e49j7gs86c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcP050CXsHj0-KtdQdegI2oxOZHAOb0HU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "722976452163-k7jrsebvcee103l53d1a52e49j7gs86c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
