@@ -33,7 +33,7 @@ public class LoginActivity extends BaseActivity {
     private CheckBox mCbRememberPass;
     private TextView mTvForgotPass;
     private FirebaseAuth mAuth;
-    private boolean isRememberPass;
+    private boolean isRememberPass = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +42,12 @@ public class LoginActivity extends BaseActivity {
         initView();
 
         if(Hawk.contains("isRememberPass")){
-            mCbRememberPass.setChecked(true);
-            if(Hawk.contains("password")) mEdtPass.setText((String)Hawk.get("password"));
-            if(Hawk.contains("email")) mEdtEmail.setText((String)Hawk.get("email"));
+            isRememberPass = Hawk.get("isRememberPass");
+            mCbRememberPass.setChecked(isRememberPass);
         }
+        if(Hawk.contains("password")) mEdtPass.setText((String)Hawk.get("password"));
+        if(Hawk.contains("email")) mEdtEmail.setText((String)Hawk.get("email"));
+
         mAuth = FirebaseAuth.getInstance();
 
         mButtonSignup.setOnClickListener(new View.OnClickListener() {
@@ -75,6 +77,16 @@ public class LoginActivity extends BaseActivity {
                 else Hawk.deleteAll();
             }
         });
+        mTvForgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetPassword();
+            }
+        });
+    }
+
+    private void resetPassword() {
+
     }
 
     private void loginUser(final String email, final String pass) {

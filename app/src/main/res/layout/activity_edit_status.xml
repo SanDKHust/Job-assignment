@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="@dimen/dp_10"
+    android:weightSum="10"
+    tools:context="vn.edu.hust.soict.khacsan.jobassignment.ui.main.EditStatusActivity">
+
+    <EditText
+        android:id="@+id/edt_edit_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="7"
+        android:background="@drawable/edit_text_boder"
+        android:gravity="top|left"
+        android:hint="@string/text_your_status"
+        android:inputType="textMultiLine"
+        android:maxLength="256"
+        android:minLines="8"
+        android:padding="@dimen/dp_4"
+        android:paddingBottom="2dp"
+        android:textColor="#2fa881"
+        android:textCursorDrawable="@drawable/bg_input_cursor"
+        android:textSize="13sp" />
+
+    <TextView
+        android:text="@string/count_character"
+        android:gravity="center_horizontal"
+        android:id="@+id/tv_length_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3" />
+</LinearLayout>

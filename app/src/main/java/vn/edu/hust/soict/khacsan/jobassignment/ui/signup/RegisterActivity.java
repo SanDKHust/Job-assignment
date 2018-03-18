@@ -19,6 +19,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 
 import com.google.firebase.database.FirebaseDatabase;
@@ -136,34 +137,39 @@ public class RegisterActivity extends BaseActivity {
                     FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
                     String uid = current_user.getUid();
 
-                    mDatabase = FirebaseDatabase.getInstance();
-                    mDatabaseReference = mDatabase.getReference().child("users").child(current_user.getUid());
-                    mDatabaseReference.setValue(current_user);
-//                    HashMap<String,String> map = new HashMap<>();
-//                    map.put("name",name);
-//                    map.put("status","Hi there I'm using app");
-//                    map.put("image","default");
-//                    map.put("thumb_image","default");
+                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(name).build();
+                    current_user.updateProfile(profileUpdates);
 
-//                    mDatabaseReference.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<Void> task) {
-//                            hideDialog();
-//                            if(task.isSuccessful()){
-//                                Intent intentMain = new Intent(RegisterActivity.this, MainActivity.class);
-//                                intentMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );
-//                                MDToast.makeText(RegisterActivity.this, "Successful!",
-//                                        MDToast.LENGTH_SHORT, MDToast.TYPE_SUCCESS).show();
-//                                startActivity(intentMain);
-//                                finish();
-//                            }else {
-//                                FirebaseAuthException e = (FirebaseAuthException)task.getException();
-//                                Log.i("HAHA", "onComplete: "+e.getErrorCode() +": "+e.getMessage());
-//                                MDToast.makeText(RegisterActivity.this, "Error: "+e.getMessage(),
-//                                        MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
-//                            }
-//                        }
-//                    });
+                    mDatabase = FirebaseDatabase.getInstance();
+                    mDatabaseReference = mDatabase.getReference().child("users").child(uid);
+
+                    HashMap<String,String> map = new HashMap<>();
+                    //map.put("name",name);
+                    map.put("status","Hi there I'm using app");
+                    map.put("image","default");
+                    map.put("thumb_image","default");
+
+                    mDatabaseReference.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            hideDialog();
+                            if(task.isSuccessful()){
+                                Intent intentMain = new Intent(RegisterActivity.this, MainActivity.class);
+                                intentMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );
+                                MDToast.makeText(RegisterActivity.this, "Successful!",
+                                        MDToast.LENGTH_SHORT, MDToast.TYPE_SUCCESS).show();
+                                startActivity(intentMain);
+                                finish();
+                            }else {
+                                FirebaseAuthException e = (FirebaseAuthException)task.getException();
+                                Logger.Log(e.getErrorCode() + ": " +e.getMessage());
+                                MDToast.makeText(RegisterActivity.this, "Error: "+e.getMessage(),
+                                        MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+                            }
+                        }
+                    });
+
                 }else {
                     hideDialog();
                     FirebaseAuthException e = (FirebaseAuthException)task.getException();

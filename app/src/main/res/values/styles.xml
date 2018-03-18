@@ -58,4 +58,22 @@
         <item name="colorAccent">#4fa881</item>
         <item name="android:windowBackground">@drawable/bg</item>
     </style>
+    <style name="CustomDialogUpdateStatus" parent="android:Theme.DeviceDefault.Dialog">
+        <item name="DialogTitleText">Updating…</item>
+        <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="DialogSpotColor">@android:color/white</item>
+        <item name="DialogSpotCount">4</item>
+    </style>
+    <style name="CustomDialogUploadImg" parent="android:Theme.DeviceDefault.Dialog">
+        <item name="DialogTitleText">Uploading image...</item>
+        <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="DialogSpotColor">@android:color/white</item>
+        <item name="DialogSpotCount">4</item>
+    </style>
+    <style name="CustomDialogCreateGroup" parent="android:Theme.DeviceDefault.Dialog">
+        <item name="DialogTitleText">Creating group...</item>
+        <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="DialogSpotColor">@android:color/white</item>
+        <item name="DialogSpotCount">4</item>
+    </style>
 </resources>

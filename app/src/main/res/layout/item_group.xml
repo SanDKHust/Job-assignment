@@ -38,7 +38,7 @@
             />
 
         <TextView
-            android:id="@+id/txtName"
+            android:id="@+id/txt_group_Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"

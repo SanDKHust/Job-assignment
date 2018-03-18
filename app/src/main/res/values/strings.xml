@@ -9,6 +9,15 @@
     <string name="email">Email</string>
     <string name="display_name">Display name</string>
     <string name="remember_pass">Remember login</string>
+    <string name="text_your_status">Enter your status</string>
+    <string name="count_character">0/256</string>
+    <string name="edit">Edit</string>
+    <string name="chup_anh">Chụp ảnh</string>
+    <string name="chon_anh">Chọn từ kho ảnh</string>
+    <string name="delete">Delete</string>
+    <string name="info">Thông tin nhóm</string>
+    <string name="leave">Rời nhóm</string>
+    <string name="text_nhap_ten_nhom">Nhập tên nhóm</string>
     <string-array name="tabs_title">
         <item>Person</item>
         <item>Group</item>

@@ -6,21 +6,32 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import vn.edu.hust.soict.khacsan.jobassignment.R;
+
+import static vn.edu.hust.soict.khacsan.jobassignment.untils.Constant.PICK_FROM_GALLERY;
 
 public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private ViewPagerAdapter mAdapterViewPager;
-
     private String[] mTabTitle;
+
+    private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mAuth = FirebaseAuth.getInstance();
+
         innitView();
+        setupViewPager();
+        setupTabIcons();
     }
 
     private void innitView() {
@@ -33,10 +44,30 @@ public class MainActivity extends AppCompatActivity {
         tabLayout =  findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        setupViewPager();
-        setupTabIcons();
+        tabLayout.addOnTabSelectedListener(tabSelectedListener);
     }
+
+    private TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
+        @Override
+        public void onTabSelected(TabLayout.Tab tab) {
+            tab.setText(mTabTitle[tab.getPosition()]);
+            if(tab.getPosition() == 2) ((FragmentInfo)mAdapterViewPager.getItem(2)).updateUI(mAuth.getCurrentUser());
+            if(tab.getPosition() == 1) ((FragmentGroup)mAdapterViewPager.getItem(1)).updateUi();;
+        }
+
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) {
+            tab.setText(null);
+        }
+
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) {
+
+        }
+    };
+
     private void setupViewPager() {
+
         mAdapterViewPager = new ViewPagerAdapter(getSupportFragmentManager(),getApplicationContext());
         mAdapterViewPager.addFrag(new FragmentPerson(), mTabTitle[0]);
         mAdapterViewPager.addFrag(new FragmentGroup(), mTabTitle[1]);
@@ -48,22 +79,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setText(mTabTitle[0]);
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                tab.setText(mTabTitle[tab.getPosition()]);
-            }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                tab.setText(null);
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
     }
     private void setupTabIcons() {
         int[] tabIcons = {
@@ -83,4 +99,5 @@ public class MainActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
 }
