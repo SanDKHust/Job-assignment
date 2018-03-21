@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -51,10 +52,13 @@ import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.karumi.dexter.listener.single.SnackbarOnDeniedPermissionListener;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.valdesekamdem.library.mdtoast.MDToast;
+import com.wang.avi.AVLoadingIndicatorView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -64,7 +68,9 @@ import java.util.List;
 import java.util.Random;
 
 import dmax.dialog.SpotsDialog;
+import id.zelory.compressor.Compressor;
 import vn.edu.hust.soict.khacsan.jobassignment.R;
+import vn.edu.hust.soict.khacsan.jobassignment.ui.login.LoginActivity;
 import vn.edu.hust.soict.khacsan.jobassignment.untils.Logger;
 
 import static android.app.Activity.RESULT_OK;
@@ -85,7 +91,9 @@ public class FragmentInfo extends Fragment {
     private View mViewSheetBottom = null;
     private BottomSheetDialog mBottomSheetDialog;
     private StorageReference mImageStorage;
-    String mCurrentPhotoPath;
+    private AVLoadingIndicatorView avi;
+
+    private String mCurrentPhotoPath;
 
     @Nullable
     @Override
@@ -96,7 +104,7 @@ public class FragmentInfo extends Fragment {
         tvName = layout.findViewById(R.id.tv_username);
         tvStatus = layout.findViewById(R.id.tv_status);
         recyclerView = layout.findViewById(R.id.info_recycler_view);
-
+        avi = layout.findViewById(R.id.loading_indicator_info);
         mImageStorage = FirebaseStorage.getInstance().getReference();
 
         layout.findViewById(R.id.btn_change_avatar).setOnClickListener(new View.OnClickListener() {
@@ -256,17 +264,29 @@ public class FragmentInfo extends Fragment {
     }
 
     public void updateUI(final FirebaseUser current_user) {
-
+        avi.show();
         tvName.setText(current_user.getDisplayName());
         if (current_user.getPhotoUrl() != null) {
             Picasso.with(getContext()).load(current_user.getPhotoUrl())
                     .placeholder(R.drawable.ic_account_circle)
                     .error(R.drawable.ic_error)
-                    .into(imageView);
-        }
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            avi.hide();
+                        }
+
+                        @Override
+                        public void onError() {
+                            MDToast.makeText(getActivity(), "Error: Avatar",
+                                    MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+                            avi.hide();
+                        }
+                    });
+        }else avi.hide();
         List<Info> infoList = new ArrayList<>();
-        infoList.add(new Info(R.drawable.ic_account_circle, "User name", current_user.getDisplayName()));
-        infoList.add(new Info(R.drawable.ic_email, "Email", current_user.getEmail()));
+        infoList.add(new Info(R.drawable.ic_account_circle, "Display name: ", current_user.getDisplayName()));
+        infoList.add(new Info(R.drawable.ic_email, "Email: ", current_user.getEmail()));
         infoList.add(new Info(R.drawable.ic_restore, "Change password", ""));
         infoList.add(new Info(R.drawable.ic_signout, "Sign out", ""));
         AdapterRVInfo adapterRVInfo = new AdapterRVInfo(R.layout.item_profile, infoList);
@@ -286,6 +306,7 @@ public class FragmentInfo extends Fragment {
                     }
                     case 3: {
                         FirebaseAuth.getInstance().signOut();
+                        startActivity(new Intent(getContext(), LoginActivity.class));
                         getActivity().finish();
                         break;
                     }
@@ -303,7 +324,7 @@ public class FragmentInfo extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 tvStatus.setText(dataSnapshot.child("status").getValue().toString());
-                String image = dataSnapshot.child("image").getValue().toString();
+                //String image = dataSnapshot.child("image").getValue().toString();
             }
 
             @Override
@@ -349,38 +370,85 @@ public class FragmentInfo extends Fragment {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
+//upload avartar
     private void uploadImage(final Uri resultUri) {
         final FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = current_user.getUid();
+        final String uid = current_user.getUid();
 
         StorageReference filePath = mImageStorage.child("profile_images").child(uid + ".jpg");
         final AlertDialog dialog = new SpotsDialog(getContext(),R.style.CustomDialogUploadImg);
 
         dialog.show();
-        filePath.putFile(resultUri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                .setPhotoUri(downloadUrl).build();
-                        current_user.updateProfile(profileUpdates);
-                        imageView.setImageURI(resultUri);
-                        dialog.dismiss();
-                        MDToast.makeText(getActivity(), "Successful!",
-                                MDToast.LENGTH_SHORT, MDToast.TYPE_SUCCESS).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        dialog.dismiss();
-                        MDToast.makeText(getActivity(), "Error: " + e.getMessage(),
-                                MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
-                    }
-                });
+        File thumb_filePath = new File(resultUri.getPath());
+        try {
+            Bitmap thumb_bitmap = new Compressor(getContext())
+                    .setMaxWidth(200)
+                    .setMaxHeight(200)
+                    .setQuality(75)
+                    .compressToBitmap(thumb_filePath);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            final byte[] thumb_byte = baos.toByteArray();
 
+            final StorageReference thumb_filepath = mImageStorage.child("profile_images").child("thumbs").child(uid + ".jpg");
+            filePath.putFile(resultUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            final Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                            UploadTask uploadTask = thumb_filepath.putBytes(thumb_byte);
+                            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot thumb_task) {
+                                    String thumb_downloadUrl = thumb_task.getDownloadUrl().toString();
+                                    DatabaseReference mCurrentUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+
+                                    mCurrentUserDatabase.child("thumb_image").setValue(thumb_downloadUrl).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                    .setPhotoUri(downloadUrl).build();
+                                            current_user.updateProfile(profileUpdates);
+                                            imageView.setImageURI(resultUri);
+                                            dialog.dismiss();
+                                            MDToast.makeText(getActivity(), "Successful!",
+                                                    MDToast.LENGTH_SHORT, MDToast.TYPE_SUCCESS).show();
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            dialog.dismiss();
+                                            MDToast.makeText(getActivity(), "Error: " + e.getMessage(),
+                                                    MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+                                        }
+                                    });
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    dialog.dismiss();
+                                    MDToast.makeText(getActivity(), "Error: " + e.getMessage(),
+                                            MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            dialog.dismiss();
+                            MDToast.makeText(getActivity(), "Error: " + e.getMessage(),
+                                    MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+                        }
+                    });
+        } catch (IOException e) {
+            dialog.dismiss();
+            MDToast.makeText(getActivity(), "Error: " + e.getMessage(),
+                    MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+            e.printStackTrace();
+        }
     }
 
     class AdapterRVInfo extends BaseQuickAdapter<Info, BaseViewHolder> {

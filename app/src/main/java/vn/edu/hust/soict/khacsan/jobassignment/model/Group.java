@@ -9,11 +9,10 @@ import java.util.ArrayList;
  */
 @IgnoreExtraProperties
 public class Group{
-    public String id, name,admin;
-    public ArrayList<String> members;
+    private String id, name,admin;
+    private ArrayList<String> members = new ArrayList<>();
 
     public Group(){
-        members = new ArrayList<>();
     }
 
     public String getAdmin() {

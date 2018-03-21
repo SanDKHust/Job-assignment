@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:padding="@dimen/dp_4"
     android:layout_height="match_parent">
-
     <RelativeLayout
         android:id="@+id/profile"
         android:layout_width="match_parent"
@@ -96,4 +95,12 @@
         android:layout_below="@+id/profile"
         android:scrollbars="vertical" />
 
+    <com.wang.avi.AVLoadingIndicatorView
+        android:layout_centerInParent="true"
+        android:id="@+id/loading_indicator_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/AVLoadingIndicatorView"
+        app:indicatorName="BallPulseIndicator"
+        app:indicatorColor="#898984"/>
 </RelativeLayout>

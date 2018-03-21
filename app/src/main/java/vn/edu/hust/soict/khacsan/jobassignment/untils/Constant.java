@@ -6,6 +6,8 @@ package vn.edu.hust.soict.khacsan.jobassignment.untils;
 
 public interface Constant {
     String STATUS = "Status";
+    String GROUPID = "GROUPID";
+    String SIZE = "SIZE";
     int REQUESTCODE = 123;
     int PICK_FROM_GALLERY = 111;
     int CAMERA_REQUEST_CODE = 222;

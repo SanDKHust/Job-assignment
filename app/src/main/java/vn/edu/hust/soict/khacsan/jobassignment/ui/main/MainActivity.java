@@ -9,8 +9,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import vn.edu.hust.soict.khacsan.jobassignment.R;
+import vn.edu.hust.soict.khacsan.jobassignment.ui.login.LoginActivity;
 
 import static vn.edu.hust.soict.khacsan.jobassignment.untils.Constant.PICK_FROM_GALLERY;
 
@@ -20,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private ViewPagerAdapter mAdapterViewPager;
     private String[] mTabTitle;
-
+    private Boolean isSelectTabGroup = false;
     private FirebaseAuth mAuth;
 
     @Override
@@ -52,7 +54,10 @@ public class MainActivity extends AppCompatActivity {
         public void onTabSelected(TabLayout.Tab tab) {
             tab.setText(mTabTitle[tab.getPosition()]);
             if(tab.getPosition() == 2) ((FragmentInfo)mAdapterViewPager.getItem(2)).updateUI(mAuth.getCurrentUser());
-            if(tab.getPosition() == 1) ((FragmentGroup)mAdapterViewPager.getItem(1)).updateUi();;
+            if(tab.getPosition() == 1) if(!isSelectTabGroup){
+                isSelectTabGroup = true;
+                ((FragmentGroup)mAdapterViewPager.getItem(1)).updateUi();
+            }
         }
 
         @Override
@@ -100,4 +105,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Override
+    protected void onStart() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser == null){
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            finish();
+        }
+        super.onStart();
+    }
 }

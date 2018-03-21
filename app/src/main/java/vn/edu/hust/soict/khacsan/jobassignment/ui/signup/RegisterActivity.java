@@ -8,6 +8,7 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import vn.edu.hust.soict.khacsan.jobassignment.R;
 import vn.edu.hust.soict.khacsan.jobassignment.base.BaseActivity;
 import vn.edu.hust.soict.khacsan.jobassignment.ui.main.MainActivity;
+import vn.edu.hust.soict.khacsan.jobassignment.untils.EmailUntils;
 import vn.edu.hust.soict.khacsan.jobassignment.untils.Logger;
 
 public class RegisterActivity extends BaseActivity {
@@ -47,7 +49,7 @@ public class RegisterActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         initViews();
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         mAuth = FirebaseAuth.getInstance();
 
         mBtnGo.setOnClickListener(btnGoClick);
@@ -113,18 +115,23 @@ public class RegisterActivity extends BaseActivity {
                 MDToast.makeText(RegisterActivity.this, "Vui lòng nhập đủ thông tin!",
                         MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
             }else {
-                if(pass.equals(passRepeat)){
-                    if (pass.length() >= 6) {
-                        showDialog();
-                        registerUser(email, name, pass);
-                    }else {
-                        MDToast.makeText(RegisterActivity.this, "Lỗi mật khẩu phải có ít nhất 6 kí tự!",
-                                MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
-                    }
-                }else {
-                    MDToast.makeText(RegisterActivity.this, "Lỗi mật khẩu không khớp nhau!",
-                            MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
-                }
+               if(EmailUntils.validate(email)){
+                   if(pass.equals(passRepeat)){
+                       if (pass.length() >= 6) {
+                           showDialog();
+                           registerUser(email, name, pass);
+                       }else {
+                           MDToast.makeText(RegisterActivity.this, "Lỗi mật khẩu phải có ít nhất 6 kí tự!",
+                                   MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+                       }
+                   }else {
+                       MDToast.makeText(RegisterActivity.this, "Lỗi mật khẩu không khớp nhau!",
+                               MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+                   }
+               }else {
+                   MDToast.makeText(RegisterActivity.this, "Email không hợp lệ",
+                           MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+               }
             }
         }
     };
@@ -145,7 +152,7 @@ public class RegisterActivity extends BaseActivity {
                     mDatabaseReference = mDatabase.getReference().child("users").child(uid);
 
                     HashMap<String,String> map = new HashMap<>();
-                    //map.put("name",name);
+                    map.put("email",email);
                     map.put("status","Hi there I'm using app");
                     map.put("image","default");
                     map.put("thumb_image","default");

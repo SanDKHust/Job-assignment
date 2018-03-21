@@ -7,7 +7,7 @@
 
 
     <ImageButton
-        android:id="@+id/btnSend"
+        android:id="@+id/btn_send"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_alignParentBottom="true"
@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/grey_200"
-        android:layout_above="@id/btnSend"/>
+        android:layout_above="@id/btn_send"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerChat"
@@ -41,7 +41,7 @@
         android:layout_marginEnd="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:layout_toStartOf="@id/btnSend"
+        android:layout_toStartOf="@id/btn_send"
         android:background="@drawable/edit_text_boder"
         android:drawablePadding="20dp"
         android:inputType="textLongMessage"

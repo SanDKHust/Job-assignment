@@ -7,15 +7,31 @@
         android:id="@+id/swipeRefreshLayout_group"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycleListGroup"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp" />
-
+            android:layout_height="match_parent">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycleListGroup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp" />
+            <com.wang.avi.AVLoadingIndicatorView
+                android:id="@+id/loading_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AVLoadingIndicatorView"
+                app:indicatorName="BallPulseIndicator"
+                app:indicatorColor="#898984"
+                android:layout_gravity="center"/>
+            <TextView
+                android:id="@+id/txt_message"
+                android:layout_gravity="center"
+                android:text="Danh sách nhóm rỗng"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
     <com.bvapp.arcmenulibrary.ArcMenu
         android:id="@+id/arcMenu"
@@ -29,4 +45,5 @@
         app:menuShadowElevation="true"
         app:menuNormalColor="@color/colorPrimaryDark"
         android:layout_gravity="center_horizontal|end" />
+
 </RelativeLayout>
