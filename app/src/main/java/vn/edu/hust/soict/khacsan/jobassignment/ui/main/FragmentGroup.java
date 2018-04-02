@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,8 +21,10 @@ import android.widget.TextView;
 import com.bvapp.arcmenulibrary.ArcMenu;
 import com.bvapp.arcmenulibrary.widget.FloatingActionButton;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -37,10 +38,10 @@ import com.orhanobut.dialogplus.ViewHolder;
 import com.valdesekamdem.library.mdtoast.MDToast;
 import com.wang.avi.AVLoadingIndicatorView;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import dmax.dialog.SpotsDialog;
 import vn.edu.hust.soict.khacsan.jobassignment.R;
@@ -49,12 +50,12 @@ import vn.edu.hust.soict.khacsan.jobassignment.ui.chat.ChatActivity;
 
 import static vn.edu.hust.soict.khacsan.jobassignment.untils.Constant.GROUPID;
 import static vn.edu.hust.soict.khacsan.jobassignment.untils.Constant.SIZE;
+import static vn.edu.hust.soict.khacsan.jobassignment.untils.DataFormatUntils.getDate;
 
 
 /**
  * Created by San on 02/27/2018.
  */
-
 public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefreshListener,GroupsAdapter.ListenerActionPopupMenu,BaseQuickAdapter.OnItemClickListener {
     private GroupsAdapter adapter;
     private List<Group> listGroup;
@@ -62,24 +63,28 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
     private FirebaseUser mCurrentUser;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabaseReference;
+    private DatabaseReference mDatabaseReferenceUsers;
+    private DatabaseReference mDatabaseReferenceGroups;
     private AlertDialog dialog;
-    private AVLoadingIndicatorView avi;
+    private AVLoadingIndicatorView mAVLoadingDialog;
     private TextView mTxtMessage;
+    private SwipeRefreshLayout refresh;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_group, container, false);
-
+        mDatabaseReferenceUsers = FirebaseDatabase.getInstance().getReference().child("users");
+        mDatabaseReferenceGroups = FirebaseDatabase.getInstance().getReference().child("groups");
         listGroup = new ArrayList<>();
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
 
-        SwipeRefreshLayout refresh = layout.findViewById(R.id.swipeRefreshLayout_group);
+        refresh = layout.findViewById(R.id.swipeRefreshLayout_group);
         refresh.setOnRefreshListener(this);
 
-        avi = layout.findViewById(R.id.loading_indicator);
+        mAVLoadingDialog = layout.findViewById(R.id.loading_indicator);
         mTxtMessage = layout.findViewById(R.id.txt_message);
         mTxtMessage.setVisibility(View.GONE);
 
@@ -119,7 +124,7 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
             @Override
             public void onClick(View v) {
                 //You can access child click in here
-                    setUpDialogCreateGoup();
+                setUpDialogCreateGoup();
 
             }
         });
@@ -160,33 +165,25 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
             public void onClick(View view) {
                 dialog.show();
                 mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("groups").push();
-                final Group group = new Group();
-                group.setAdmin(mCurrentUser.getUid());
-                group.setId(mDatabaseReference.getKey());
-                group.setName(edtName.getText().toString().trim());
+                final Group group = new Group(edtName.getText().toString().trim(),mCurrentUser.getUid(),
+                        mCurrentUser.getDisplayName()+" đã tạo nhóm vào: "+getDate(System.currentTimeMillis()));
+                //group.setId(mDatabaseReference.getKey());
                 group.addMember(mCurrentUser.getUid());
 
-                Map<String,String> map = new HashMap<>();
-                map.put("name",group.getName());
-                map.put("admin",group.getAdmin());
-
-                mDatabaseReference.setValue(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+                mDatabaseReference.setValue(group).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        mDatabaseReference.child("members").child("0").setValue(group.getAdmin())
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                MDToast.makeText(getContext(), "Successful",
-                                        MDToast.LENGTH_SHORT, MDToast.TYPE_SUCCESS).show();
-                                DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference()
-                                        .child("users").child(mCurrentUser.getUid()).child("groups");
-                                dbReference.child(String.valueOf(adapter.getData().size())).setValue(group.getId());
-
-                                mDialogCreateGroup.dismiss();
-                                dialog.dismiss();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
+                        mDatabaseReferenceUsers.child(mCurrentUser.getUid()).child("groups")
+                                .child(String.valueOf(adapter.getData().size())).setValue(mDatabaseReference.getKey())
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        MDToast.makeText(getContext(), "Successful",
+                                                MDToast.LENGTH_SHORT, MDToast.TYPE_SUCCESS).show();
+                                        mDialogCreateGroup.dismiss();
+                                        dialog.dismiss();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 dialog.dismiss();
@@ -210,14 +207,13 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
 
     @Override
     public void onRefresh() {
-
+        adapter.getData().clear();
+        updateUi();
     }
 
     public void updateUi(){
-        avi.show();
-        final DatabaseReference dbReferenceInfoGroup =FirebaseDatabase.getInstance().getReference().child("groups");
-        final DatabaseReference dbReferenceListGroups = FirebaseDatabase.getInstance().getReference().child("users").child(mCurrentUser.getUid());
-
+        mAVLoadingDialog.show();
+        final DatabaseReference dbReferenceListGroups = mDatabaseReferenceUsers.child(mCurrentUser.getUid());
         dbReferenceListGroups.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -227,13 +223,13 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                             final String id = dataSnapshot.getValue(String.class);
-                            dbReferenceInfoGroup.child(id).addValueEventListener(new ValueEventListener() {
+                            if(id!= null) mDatabaseReferenceGroups.child(id).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     Group group = dataSnapshot.getValue(Group.class);
-                                    group.setId(id);
-                                    List<Group> groups = adapter.getData();
-                                    if(groups != null){
+                                    if(group!=null) {
+                                        group.setId(id);
+                                        List<Group> groups = adapter.getData();
                                         int i = 0;
                                         for(; i < groups.size(); i++){
                                             if(groups.get(i).getId().equals(id)){
@@ -242,15 +238,14 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
                                             }
                                         }
                                         if(i >= groups.size()) adapter.addData(group);
-                                    }else {
-                                        adapter.addData(group);
+                                        mAVLoadingDialog.hide();
+                                        if(refresh.isRefreshing()) refresh.setRefreshing(false);
                                     }
-                                    avi.hide();
                                 }
 
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) {
-
+                                    mAVLoadingDialog.hide();
                                 }
                             });
                         }
@@ -272,18 +267,18 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-
+                            mAVLoadingDialog.hide();
                         }
                     });
                 }else {
                     mTxtMessage.setVisibility(View.VISIBLE);
-                    avi.hide();
+                    mAVLoadingDialog.hide();
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                mAVLoadingDialog.hide();
             }
         });
 

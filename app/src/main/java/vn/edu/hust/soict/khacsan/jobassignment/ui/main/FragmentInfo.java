@@ -53,6 +53,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.karumi.dexter.listener.single.SnackbarOnDeniedPermissionListener;
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.valdesekamdem.library.mdtoast.MDToast;
@@ -268,6 +269,7 @@ public class FragmentInfo extends Fragment {
         tvName.setText(current_user.getDisplayName());
         if (current_user.getPhotoUrl() != null) {
             Picasso.with(getContext()).load(current_user.getPhotoUrl())
+                    .networkPolicy(NetworkPolicy.OFFLINE)
                     .placeholder(R.drawable.ic_account_circle)
                     .error(R.drawable.ic_error)
                     .into(imageView, new Callback() {
@@ -278,8 +280,10 @@ public class FragmentInfo extends Fragment {
 
                         @Override
                         public void onError() {
-                            MDToast.makeText(getActivity(), "Error: Avatar",
-                                    MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+                            Picasso.with(getContext()).load(current_user.getPhotoUrl())
+                                    .placeholder(R.drawable.ic_account_circle)
+                                    .error(R.drawable.ic_error)
+                                    .into(imageView);
                             avi.hide();
                         }
                     });

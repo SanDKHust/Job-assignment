@@ -39,7 +39,7 @@ public class UsersAdapter extends BaseQuickAdapter<Users,BaseViewHolder> {
 
         if(!item.getThumb_image().equals("default")){
                 Picasso.with(mContext).load(item.getThumb_image())
-                        .placeholder(R.drawable.ic_person)
+                        .placeholder(R.drawable.default_avata)
                         .error(R.drawable.ic_error)
                         .into((CircleImageView) helper.getView(R.id.profile_item_image));
         }

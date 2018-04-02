@@ -52,9 +52,11 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
-            tab.setText(mTabTitle[tab.getPosition()]);
-            if(tab.getPosition() == 2) ((FragmentInfo)mAdapterViewPager.getItem(2)).updateUI(mAuth.getCurrentUser());
-            if(tab.getPosition() == 1) if(!isSelectTabGroup){
+            int pos = tab.getPosition();
+            tab.setText(mTabTitle[pos]);
+            setTitle(mTabTitle[pos]);
+            if(pos == 2) ((FragmentInfo)mAdapterViewPager.getItem(2)).updateUI(mAuth.getCurrentUser());
+            if(pos == 1) if(!isSelectTabGroup){
                 isSelectTabGroup = true;
                 ((FragmentGroup)mAdapterViewPager.getItem(1)).updateUi();
             }

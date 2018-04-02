@@ -2,7 +2,10 @@ package vn.edu.hust.soict.khacsan.jobassignment.base;
 
 import android.app.Application;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.orhanobut.hawk.Hawk;
+import com.squareup.picasso.OkHttpDownloader;
+import com.squareup.picasso.Picasso;
 
 import vn.edu.hust.soict.khacsan.jobassignment.untils.Logger;
 
@@ -16,6 +19,13 @@ public class Applications extends Application{
     public void onCreate() {
         super.onCreate();
         Hawk.init(getApplicationContext()).build();
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+        Picasso.Builder builder = new Picasso.Builder(this);
+        builder.downloader(new OkHttpDownloader(this,Integer.MAX_VALUE));
+        Picasso built = builder.build();
+        built.setIndicatorsEnabled(true);
+        Picasso.setSingletonInstance(built);
     }
     public void handleUncaughtException(Thread thread, Throwable e) {
         e.printStackTrace();

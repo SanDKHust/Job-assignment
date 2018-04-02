@@ -154,7 +154,7 @@ public class RegisterActivity extends BaseActivity {
                     HashMap<String,String> map = new HashMap<>();
                     map.put("email",email);
                     map.put("status","Hi there I'm using app");
-                    map.put("image","default");
+                    map.put("name",name);
                     map.put("thumb_image","default");
 
                     mDatabaseReference.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {

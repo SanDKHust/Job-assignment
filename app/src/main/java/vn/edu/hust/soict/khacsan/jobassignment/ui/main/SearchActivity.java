@@ -24,8 +24,10 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.valdesekamdem.library.mdtoast.MDToast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import vn.edu.hust.soict.khacsan.jobassignment.R;
+import vn.edu.hust.soict.khacsan.jobassignment.model.Group;
 import vn.edu.hust.soict.khacsan.jobassignment.model.Users;
 import vn.edu.hust.soict.khacsan.jobassignment.untils.EmailUntils;
 
@@ -41,6 +43,7 @@ public class SearchActivity extends AppCompatActivity implements BaseQuickAdapte
     private TextView mTextNotification;
     private  UsersAdapter adapter;
     private ArrayList<Users> mListUsers;
+    private ArrayList<Group> mListGroups;
     private String mGroupID ="";
     private int mSize;
 
@@ -56,9 +59,7 @@ public class SearchActivity extends AppCompatActivity implements BaseQuickAdapte
         Intent intent = getIntent();
         if(intent != null){
             mGroupID = intent.getStringExtra(GROUPID);
-
             mSize = intent.getIntExtra(SIZE,0);
-            Log.i("HAHA", "onCreate: "+mGroupID+" "+mSize);
         }
 //        setSupportActionBar(mTopToolbar);
 //        mTopToolbar.setTitle("Search");
@@ -104,6 +105,44 @@ public class SearchActivity extends AppCompatActivity implements BaseQuickAdapte
 
     }
 
+    private void  SearchGroup(final String searchText){
+        mListGroups = new ArrayList<>();
+        mDatabaseReferenceGroups.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    final Group group = snapshot.getValue(Group.class);
+                    if(group != null && (group.getName().contains(searchText) || group.getDate().contains(searchText) )){
+                        mListGroups.add(group);
+                        continue;
+                    }
+                    if(group != null){
+                        List<String> members = group.getMembers();
+                        for (String member: members) {
+                            mDatabaseReferenceUsers.child(member).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String name = dataSnapshot.child("name").getValue(String.class);
+                                    if(name != null && name.contains(searchText)) mListGroups.add(group);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void Search(final String searchText) {
         mListUsers = new ArrayList<>();
 
@@ -115,8 +154,10 @@ public class SearchActivity extends AppCompatActivity implements BaseQuickAdapte
                         String email = snapshot.child("email").getValue(String.class);
                         if (email != null && email.toLowerCase().equals(searchText.toLowerCase())) {
                             Users user = snapshot.getValue(Users.class);
-                            user.setId(snapshot.getKey());
-                            mListUsers.add(user);
+                            if(user != null) {
+                                user.setId(snapshot.getKey());
+                                mListUsers.add(user);
+                            }
                         }
                     }
                     if(mListUsers.isEmpty()){
@@ -141,8 +182,10 @@ public class SearchActivity extends AppCompatActivity implements BaseQuickAdapte
                         String name = snapshot.child("name").getValue(String.class);
                         if (name != null && name.toLowerCase().contains(searchText.toLowerCase())) {
                             Users user = snapshot.getValue(Users.class);
-                            user.setId(snapshot.getKey());
-                            mListUsers.add(user);
+                            if(user != null) {
+                                user.setId(snapshot.getKey());
+                                mListUsers.add(user);
+                            }
                         }
                     }
                     if(mListUsers.isEmpty()){
@@ -209,7 +252,6 @@ public class SearchActivity extends AppCompatActivity implements BaseQuickAdapte
             public boolean onMenuItemClick(MenuItem menuItem) {
                 if(menuItem.getItemId() == R.id.action_add_to_group){
                     final Users user = (Users) adapter.getItem(position);
-                    Log.i("HAHA", "onMenuItemClick: "+mGroupID);
                     mDatabaseReferenceGroups.child(mGroupID).child("members").child(String.valueOf(mSize))
                             .setValue(user.getId()).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override

@@ -41,17 +41,22 @@
         <activity
             android:name=".ui.login.LoginActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".ui.signup.RegisterActivity"
-            android:parentActivityName=".ui.login.LoginActivity"/>
-        <activity android:name=".ui.chat.ChatActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".ui.main.EditStatusActivity" />
+        <activity
+            android:name=".ui.signup.RegisterActivity"
+            android:parentActivityName=".ui.login.LoginActivity" />
+        <activity
+            android:name=".ui.chat.ChatActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.main.EditStatusActivity"
+            android:theme="@style/AppTheme" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".ui.main.SearchActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.chat.TeamWorkingActivity"></activity>
     </application>
 
 </manifest>

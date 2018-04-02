@@ -9,10 +9,24 @@ import java.util.ArrayList;
  */
 @IgnoreExtraProperties
 public class Group{
-    private String id, name,admin;
+    private String id, name,admin,date;
     private ArrayList<String> members = new ArrayList<>();
 
     public Group(){
+    }
+
+    public Group(String name, String admin, String date) {
+        this.name = name;
+        this.admin = admin;
+        this.date = date;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getAdmin() {
