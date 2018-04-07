@@ -38,15 +38,14 @@ import com.orhanobut.dialogplus.ViewHolder;
 import com.valdesekamdem.library.mdtoast.MDToast;
 import com.wang.avi.AVLoadingIndicatorView;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import dmax.dialog.SpotsDialog;
 import vn.edu.hust.soict.khacsan.jobassignment.R;
 import vn.edu.hust.soict.khacsan.jobassignment.model.Group;
 import vn.edu.hust.soict.khacsan.jobassignment.ui.chat.ChatActivity;
+import vn.edu.hust.soict.khacsan.jobassignment.ui.search.SearchActivity;
 
 import static vn.edu.hust.soict.khacsan.jobassignment.untils.Constant.GROUPID;
 import static vn.edu.hust.soict.khacsan.jobassignment.untils.Constant.SIZE;
@@ -71,6 +70,10 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
     private SwipeRefreshLayout refresh;
 
 
+    public FragmentGroup() {
+        // Required empty public constructor
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -87,6 +90,7 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
         mAVLoadingDialog = layout.findViewById(R.id.loading_indicator);
         mTxtMessage = layout.findViewById(R.id.txt_message);
         mTxtMessage.setVisibility(View.GONE);
+        
 
         ArcMenu menu = layout.findViewById(R.id.arcMenu);
         setupArcMenu(menu);
@@ -137,7 +141,7 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
         menu.addItem(floatButtonSearch, "Search", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //You can access child click in here
+                startActivity(new Intent(getContext(),SearchActivity.class));
 
             }
         });

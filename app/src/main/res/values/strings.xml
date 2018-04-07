@@ -22,9 +22,9 @@
     <string name="text_search">Search</string>
     <string name="default_status">Default status</string>
     <string name="add_to_group">Thêm vào nhóm</string>
-    <string-array name="tabs_title">
-        <item>Person</item>
-        <item>Group</item>
-        <item>Information</item>
-    </string-array>
+    <string name="text_personal">Personal</string>
+    <string name="text_groups">Groups</string>
+    <string name="text_profile">Profile</string>
+    <string name="text_loading">Loading...</string>
+    <string name="text_load_failed">Load failed</string>
 </resources>

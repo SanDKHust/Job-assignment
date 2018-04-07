@@ -1,7 +1,6 @@
 package vn.edu.hust.soict.khacsan.jobassignment.ui.chat;
 
 import android.support.annotation.Nullable;
-import android.widget.CheckBox;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -27,7 +26,7 @@ public class UsersAdapterSelect extends BaseQuickAdapter<Users,BaseViewHolder> {
         helper.getView(R.id.checkbox_item_users_select).setSelected(false);
         if(!item.getThumb_image().equals("default")){
             Picasso.with(mContext).load(item.getThumb_image())
-                    .placeholder(R.drawable.default_avata)
+                    .placeholder(R.drawable.default_avatar)
                     .error(R.drawable.ic_error)
                     .into((CircleImageView) helper.getView(R.id.profile_item_image_select));
         }

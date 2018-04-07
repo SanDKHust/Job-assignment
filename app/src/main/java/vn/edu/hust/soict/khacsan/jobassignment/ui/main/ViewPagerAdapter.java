@@ -16,17 +16,16 @@ import vn.edu.hust.soict.khacsan.jobassignment.R;
  */
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
-    private List<String> mTitles;
+
     private List<Fragment> mFragments;
-    public ViewPagerAdapter(FragmentManager fm,Context context) {
+
+    public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
         mFragments = new ArrayList<>();
-        mTitles = new ArrayList<>();
     }
 
-    public void addFrag(Fragment fragment,String title){
+    public void addFrag(Fragment fragment){
         mFragments.add(fragment);
-        mTitles.add(title);
     }
 
     @Override

@@ -54,9 +54,10 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
-            android:name=".ui.main.SearchActivity"
+            android:name=".ui.search.SearchActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.chat.TeamWorkingActivity"></activity>
+        <activity android:name=".ui.chat.TeamWorkingActivity"
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>

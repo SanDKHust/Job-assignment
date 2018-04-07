@@ -109,7 +109,7 @@ public class EditStatusActivity extends AppCompatActivity {
                         setResult(Activity.RESULT_CANCELED, returnIntent);
                         finish();
                         MDToast.makeText(EditStatusActivity.this, "Error: "+task.getException().getMessage(),
-                                MDToast.LENGTH_SHORT, MDToast.TYPE_SUCCESS).show();
+                                MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
                     }
                     dialog.dismiss();
                 }

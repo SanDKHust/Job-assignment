@@ -1,105 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Công việc nhóm"
-        android:textSize="24sp" />
-
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="#c5c5c5">
-        <EditText
-            android:id="@+id/edt_nhap_ten_cv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dp_10"
-            android:hint="Tên công việc" />
-    </android.support.design.widget.TextInputLayout>
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="#c5c5c5">
-        <EditText
-            android:id="@+id/edt_description_cv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dp_10"
-            android:hint="Mô tả" />
-    </android.support.design.widget.TextInputLayout>
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/TextInputLayout_deadline_cv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="#c5c5c5">
-        <EditText
-            android:id="@+id/edt_deadline_cv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dp_10"
-            android:hint="Deadline" />
-    </android.support.design.widget.TextInputLayout>
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_margin="@dimen/dp_10">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
         <TextView
-            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Công việc nhóm"
+            android:textSize="24sp" />
+
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Thành viên đảm nhiệm:"/>
-        <android.support.v7.widget.RecyclerView
-            android:background="@drawable/recycler_boder"
-            android:id="@+id/list_member_select"
-            android:padding="@dimen/dp_4"
-            android:layout_marginTop="@dimen/dp_10"
+            android:textColorHint="#c5c5c5">
+
+            <EditText
+                android:id="@+id/edt_nhap_ten_cv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_4"
+                android:hint="Tên công việc" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </android.support.v7.widget.RecyclerView>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:textColorHint="#c5c5c5">
 
-        <Button
-            android:id="@+id/btn_cancel_cv"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_weight="1"
-            android:background="@color/colorRedGG"
-            android:text="Hủy"
-            android:textColor="@color/colorWhite"
-            android:textSize="18sp" />
+            <EditText
+                android:id="@+id/edt_description_cv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_4"
+                android:hint="Mô tả" />
+        </android.support.design.widget.TextInputLayout>
 
-        <Button
-            android:id="@+id/btn_save_cv"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_weight="1"
-            android:background="@color/colorBlueGG"
-            android:text="Lưu"
-            android:textColor="@color/colorWhite"
-            android:textSize="18sp" />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/TextInputLayout_deadline_cv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColorHint="#c5c5c5">
+
+            <EditText
+                android:id="@+id/edt_deadline_cv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_4"
+                android:hint="Deadline" />
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_margin="@dimen/dp_4"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Thành viên đảm nhiệm:"
+                android:textSize="14sp" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list_member_select"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/dp_4"
+                android:background="@drawable/recycler_boder"
+                android:padding="@dimen/dp_4"></android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_cancel_cv"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:background="@color/colorRedGG"
+                android:text="Hủy"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btn_save_cv"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:background="@color/colorBlueGG"
+                android:text="Lưu"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</ScrollView>

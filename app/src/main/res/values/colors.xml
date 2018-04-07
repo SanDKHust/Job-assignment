@@ -11,8 +11,10 @@
     <color name="grey_500">#a4a4a4</color>
     <color name="grey_800">#212121</color>
     <color name="focus_box_mask">#60000000</color>
-    <color name="colorBlueGG">#4285F4</color>
+    <color name="colorBlueGG">#03A9F4</color>
     <color name="colorRedGG">#EA4335</color>
     <color name="colorYellowGG">#FBBC05</color>
     <color name="colorGreenGG">#34A853</color>
+    <color name="tab_checked">#ff0092f4</color>
+    <color name="tab_unchecked">#aaa</color>
 </resources>

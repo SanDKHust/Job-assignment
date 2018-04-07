@@ -64,4 +64,5 @@ public class Group{
     public void addMember(String member){
         members.add(member);
     }
+
 }

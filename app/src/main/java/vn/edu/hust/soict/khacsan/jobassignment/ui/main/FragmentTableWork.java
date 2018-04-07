@@ -10,16 +10,23 @@ import android.view.ViewGroup;
 
 import vn.edu.hust.soict.khacsan.jobassignment.R;
 
-/**
- * Created by San on 02/27/2018.
- */
+public class FragmentTableWork extends Fragment{
 
-public class FragmentPerson extends Fragment {
+    public FragmentTableWork() {
+        // Required empty public constructor
+    }
+
+    public static FragmentTableWork newInstance(String param1, String param2) {
+        FragmentTableWork fragment = new FragmentTableWork();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View layout = inflater.inflate(R.layout.fragment_person, container, false);
-
+        View layout = inflater.inflate(R.layout.fragment_table_work, container, false);
         return layout;
     }
 }

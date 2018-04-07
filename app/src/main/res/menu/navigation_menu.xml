@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_personal"
+        android:icon="@drawable/ic_personal"
+        android:title="@string/text_personal" />
+
+    <item
+        android:id="@+id/navigation_groups"
+        android:icon="@drawable/ic_group"
+        android:title="@string/text_groups" />
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/ic_info"
+        android:title="@string/text_profile" />
+
+
+</menu>

@@ -9,6 +9,7 @@
         <!-- set Can use Activity transitions -->
         <item name="android:windowContentTransitions">true</item>
     </style>
+
     <style name="MainTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#03A9F4</item>

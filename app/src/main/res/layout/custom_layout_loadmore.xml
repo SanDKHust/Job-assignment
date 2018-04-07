@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp_4"
-            android:text="@string/loading"
+            android:text="@string/text_loading"
             android:textColor="#0dddb8"
             android:textSize="@dimen/sp_14"/>
     </LinearLayout>
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textColor="#0dddb8"
-            android:text="@string/load_failed"/>
+            android:text="@string/text_load_failed"/>
 
     </FrameLayout>
 

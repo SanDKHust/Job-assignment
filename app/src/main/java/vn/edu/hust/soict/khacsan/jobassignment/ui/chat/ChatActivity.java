@@ -38,6 +38,7 @@ import vn.edu.hust.soict.khacsan.jobassignment.R;
 import vn.edu.hust.soict.khacsan.jobassignment.model.Messages;
 
 import static vn.edu.hust.soict.khacsan.jobassignment.untils.Constant.GROUPID;
+import static vn.edu.hust.soict.khacsan.jobassignment.untils.Constant.USERID;
 
 /**
  * Created by San on 03/04/2018.
@@ -285,7 +286,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             intent.putExtra(GROUPID,mIdGroup);
             startActivity(intent);
         } else if(id == R.id.action_cv_caNhan){
-
+            Intent intent = new Intent(ChatActivity.this,TeamWorkingActivity.class);
+            intent.putExtra(GROUPID,mIdGroup);
+            intent.putExtra(USERID,mCurrentUser.getUid());
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

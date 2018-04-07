@@ -1,6 +1,6 @@
 package vn.edu.hust.soict.khacsan.jobassignment.model;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,20 +10,32 @@ import java.util.List;
 public class Work {
     String name,description;
     boolean status;
-    List<String> member;
-    Date deadline;
-    //List<Comments> comments;
+    List<String> members;
+    String deadline,dateCreated;
+
 
     public Work() {
+        members =new ArrayList<>();
     }
 
+    public String getDateCreated() {
+        return dateCreated;
+    }
 
-    public Work(String name, String description, boolean status, List<String> member, Date deadline) {
+    public void setDateCreated(String dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Work(String name, String description, boolean status, String deadline) {
         this.name = name;
         this.description = description;
         this.status = status;
-        this.member = member;
         this.deadline = deadline;
+        members =new ArrayList<>();
+    }
+
+    public void addMember(String id){
+        members.add(id);
     }
 
     public String getName() {
@@ -34,11 +46,11 @@ public class Work {
         this.name = name;
     }
 
-    public Date getDeadline() {
+    public String getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(Date deadline) {
+    public void setDeadline(String deadline) {
         this.deadline = deadline;
     }
 
@@ -58,11 +70,11 @@ public class Work {
         this.status = status;
     }
 
-    public List<String> getMember() {
-        return member;
+    public List<String> getMembers() {
+        return members;
     }
 
-    public void setMember(List<String> member) {
-        this.member = member;
+    public void setMembers(List<String> members) {
+        this.members = members;
     }
 }

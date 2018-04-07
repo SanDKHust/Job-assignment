@@ -43,7 +43,5 @@
         app:menuClickAnim="true"
         app:menuChildAnim="false"
         app:menuShadowElevation="true"
-        app:menuNormalColor="@color/colorPrimaryDark"
-        android:layout_gravity="center_horizontal|end" />
-
+        app:menuNormalColor="@color/colorPrimaryDark"/>
 </RelativeLayout>

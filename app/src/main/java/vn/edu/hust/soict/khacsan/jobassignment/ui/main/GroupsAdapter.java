@@ -27,7 +27,8 @@ public class GroupsAdapter extends BaseQuickAdapter<Group,BaseViewHolder> {
 
     @Override
     protected void convert(BaseViewHolder helper, final Group item) {
-        helper.setText(R.id.txt_group_Name,item.getName());
+        helper.setText(R.id.txt_group_Name,item.getName())
+                .setText(R.id.icon_group,String.valueOf(item.getName().charAt(0)).toUpperCase());
         helper.getView(R.id.btnMoreAction).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,6 +73,11 @@ public class GroupsAdapter extends BaseQuickAdapter<Group,BaseViewHolder> {
         void onDelete(Group group);
         void onInfo(Group group);
         void onLeave(String idGroup);
+    }
+
+    public interface ListenerActionPopupMenuSearch {
+        void onRequestAdd(Group group);
+        void onInfo(Group group);
     }
 
 }
