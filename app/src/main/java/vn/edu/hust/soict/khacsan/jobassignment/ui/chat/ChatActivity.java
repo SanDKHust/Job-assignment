@@ -234,11 +234,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (mEdtWriteChat.getText().toString().trim().isEmpty()) {
                     mImgBtnSend.setClickable(false);
-                   // mImgBtnSend.setI(Color.parseColor("#FFADB5B7"));
                 }
                 else {
                     mImgBtnSend.setClickable(true);
-                    //mImgBtnSend.setBackgroundColor(Color.parseColor("#1b8efa"));
                 }
             }
 

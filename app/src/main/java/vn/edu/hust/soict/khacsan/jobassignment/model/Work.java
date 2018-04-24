@@ -8,11 +8,18 @@ import java.util.List;
  */
 
 public class Work {
-    String name,description;
+    String name,description,id;
     boolean status;
     List<String> members;
     String deadline,dateCreated;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public Work() {
         members =new ArrayList<>();

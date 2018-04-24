@@ -15,11 +15,14 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,6 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 import com.valdesekamdem.library.mdtoast.MDToast;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -57,6 +61,7 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
     private String mGroupId, mUserId;
     private WorkAdapter mWorkAdapter;
     private TextView mTextViewNotification;
+    private AVLoadingIndicatorView mAVLoadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +81,8 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
         mRcVListCVNhom = findViewById(R.id.list_cv_nhom);
         mFabAddCVNhom = findViewById(R.id.fab_btn_add_cv);
         mTextViewNotification = findViewById(R.id.text_show_chua_co_cv);
+        mAVLoadingDialog = findViewById(R.id.loading_team_work);
+        mAVLoadingDialog.hide();
 
         mRcVListCVNhom.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mFabAddCVNhom.setOnClickListener(this);
@@ -102,9 +109,14 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
         mDatabaseReferenceGroup.child("works").limitToLast(50).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String id = dataSnapshot.getKey();
                 Work work = dataSnapshot.getValue(Work.class);
                 if (work != null && work.getMembers().contains(mUserId)) {
+                    work.setId(id);
                     mWorkAdapter.addData(work);
+                    if (mWorkAdapter.getData().size() != 0) {
+                        mTextViewNotification.setVisibility(View.GONE);
+                    } else mTextViewNotification.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -129,9 +141,40 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
 
             }
         });
-
-        mRcVListCVNhom.setAdapter(mWorkAdapter);
-
+        mWorkAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(BaseQuickAdapter adapter, View view, final int position) {
+                final Work work = mWorkAdapter.getItem(position);
+                if (work != null) {
+                    final PopupMenu popup = new PopupMenu(getApplicationContext(), view);
+                    popup.getMenuInflater().inflate(R.menu.popup_menu_item_cv, popup.getMenu());
+                    if(work.isStatus()) popup.getMenu().getItem(0).setTitle("Chưa hoàn thành");
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        public boolean onMenuItemClick(MenuItem itemMenu) {
+                            if (itemMenu.getItemId() == R.id.action_item_cv_completed) {
+                                mAVLoadingDialog.show();
+                                mDatabaseReferenceGroup.child("works").child(work.getId())
+                                   .child("status").setValue(!work.isStatus()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        work.setStatus(!work.isStatus() );
+                                        mWorkAdapter.notifyDataSetChanged();
+                                        mAVLoadingDialog.hide();
+                                        MDToast.makeText(TeamWorkingActivity.this, "Successful!", MDToast.LENGTH_SHORT, MDToast.TYPE_SUCCESS).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        mAVLoadingDialog.hide();
+                                        MDToast.makeText(TeamWorkingActivity.this, "Có lỗi xảy ra vui lòng thử lại!", MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+                                    }
+                                });
+                            } return true;
+                        }
+                    }); popup.show();
+                } return false;
+            }
+        }); mRcVListCVNhom.setAdapter(mWorkAdapter);
     }
 
 
@@ -140,9 +183,15 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
         mDatabaseReferenceGroup.child("works").limitToLast(50).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String id = dataSnapshot.getKey();
                 Work work = dataSnapshot.getValue(Work.class);
-                if (work != null)
+                if (work != null) {
+                    work.setId(id);
                     mWorkAdapter.addData(work);
+                }
+                if (mWorkAdapter.getData().size() != 0) {
+                    mTextViewNotification.setVisibility(View.GONE);
+                } else mTextViewNotification.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -167,8 +216,78 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
         });
 
         mRcVListCVNhom.setAdapter(mWorkAdapter);
+        mDatabaseReferenceGroup.child("admin").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String id = dataSnapshot.getValue(String.class);
 
+                FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
 
+                if(id != null && current_user != null && id.equals(current_user.getUid())){
+                    mWorkAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+                        @Override
+                        public boolean onItemLongClick(BaseQuickAdapter adapter, View view, final int position) {
+                            final PopupMenu popup = new PopupMenu(getApplicationContext(), view);
+                            popup.getMenuInflater().inflate(R.menu.popup_menu_admin_cv, popup.getMenu());
+                            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                @Override
+                                public boolean onMenuItemClick(MenuItem itemMenu) {
+
+                                    int id = itemMenu.getItemId();
+                                    if(id == R.id.action_delete_cv){
+                                        final DialogPlus mDialogDelete = DialogPlus.newDialog(TeamWorkingActivity.this)
+                                                .setContentHolder(new ViewHolder(R.layout.dialog_delete)).setCancelable(true)
+                                                .setPadding(16, 16, 16, 16).setGravity(Gravity.CENTER).create();
+
+                                        mDialogDelete.findViewById(R.id.btn_yes).setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                mDatabaseReferenceGroup.child("works").child(mWorkAdapter.getItem(position).getId())
+                                                        .removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        MDToast.makeText(TeamWorkingActivity.this, "Successful!", MDToast.LENGTH_SHORT, MDToast.TYPE_SUCCESS).show();
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        MDToast.makeText(TeamWorkingActivity.this, "Error: "+e.getMessage(), MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+
+                                                    }
+                                                });
+
+                                            }
+                                        });
+                                        mDialogDelete.findViewById(R.id.btn_no).setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                mDialogDelete.dismiss();
+                                            }
+                                        });
+
+                                        mDialogDelete.show();
+                                        return true;
+                                    }else {
+                                        if(id == R.id.action_add_memmber_th){
+
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }
+                            });
+                            popup.show();
+                            return false;
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void setupListMembers() {
@@ -267,12 +386,7 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
 
     private void setupDialog() {
         if (mDialogCreateCV == null) {
-            mDialogCreateCV = DialogPlus.newDialog(TeamWorkingActivity.this)
-                    .setContentHolder(new ViewHolder(R.layout.custom_dialog_create_work))
-                    .setCancelable(true)
-                    .setPadding(16, 16, 16, 16)
-                    .setGravity(Gravity.CENTER)
-                    .create();
+            mDialogCreateCV = DialogPlus.newDialog(TeamWorkingActivity.this).setContentHolder(new ViewHolder(R.layout.custom_dialog_create_work)).setCancelable(true).setPadding(16, 16, 16, 16).setGravity(Gravity.CENTER).create();
             mDialogCreateCV.findViewById(R.id.TextInputLayout_deadline_cv).setOnClickListener(this);
             mEdtDeadline = (EditText) mDialogCreateCV.findViewById(R.id.edt_deadline_cv);
             mEdtDeadline.setOnClickListener(this);
@@ -291,34 +405,26 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
             mDialogCreateCV.findViewById(R.id.btn_save_cv).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String name = mEdtName.getText().toString().trim(),
-                            description = mEdtDescription.getText().toString().trim(),
-                            deadline = mEdtDeadline.getText().toString().trim();
+                    String name = mEdtName.getText().toString().trim(), description = mEdtDescription.getText().toString().trim(), deadline = mEdtDeadline.getText().toString().trim();
 
                     if (name.equals("") || description.equals("")) {
-                        MDToast.makeText(TeamWorkingActivity.this, "Vui lòng nhập đủ thông tin",
-                                MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+                        MDToast.makeText(TeamWorkingActivity.this, "Vui lòng nhập đủ thông tin", MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
                     } else {
                         Work work = new Work(name, description, false, deadline);
                         for (Users user : mListUserSelect) work.addMember(user.getId());
-                        ;
 
                         work.setDateCreated(DateFormat.getDateTimeInstance().format(new Date()));
-                        mDatabaseReferenceGroup.child("works").push().setValue(work)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        MDToast.makeText(TeamWorkingActivity.this, "Successful!",
-                                                MDToast.LENGTH_SHORT, MDToast.TYPE_SUCCESS).show();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        MDToast.makeText(TeamWorkingActivity.this, "Error: " + e.getMessage(),
-                                                MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
-                                    }
-                                });
+                        mDatabaseReferenceGroup.child("works").push().setValue(work).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                MDToast.makeText(TeamWorkingActivity.this, "Successful!", MDToast.LENGTH_SHORT, MDToast.TYPE_SUCCESS).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                MDToast.makeText(TeamWorkingActivity.this, "Error: " + e.getMessage(), MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
+                            }
+                        });
                         mDialogCreateCV.dismiss();
                     }
                 }
@@ -340,11 +446,4 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onResume() {
-        if (mWorkAdapter.getData().size() != 0) {
-            mTextViewNotification.setVisibility(View.GONE);
-        } else mTextViewNotification.setVisibility(View.VISIBLE);
-        super.onResume();
-    }
 }
