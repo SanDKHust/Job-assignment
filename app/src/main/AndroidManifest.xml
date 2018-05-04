@@ -56,8 +56,10 @@
         <activity
             android:name=".ui.search.SearchActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.chat.TeamWorkingActivity"
-            android:theme="@style/AppTheme"/>
+        <activity
+            android:name=".ui.chat.TeamWorkingActivity"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".ui.group.GroupInfoActivity"></activity>
     </application>
 
 </manifest>
