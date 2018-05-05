@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -45,6 +46,7 @@ import dmax.dialog.SpotsDialog;
 import vn.edu.hust.soict.khacsan.jobassignment.R;
 import vn.edu.hust.soict.khacsan.jobassignment.model.Group;
 import vn.edu.hust.soict.khacsan.jobassignment.ui.chat.ChatActivity;
+import vn.edu.hust.soict.khacsan.jobassignment.ui.group.GroupInfoActivity;
 import vn.edu.hust.soict.khacsan.jobassignment.ui.search.SearchActivity;
 
 import static vn.edu.hust.soict.khacsan.jobassignment.untils.Constant.GROUPID;
@@ -56,6 +58,7 @@ import static vn.edu.hust.soict.khacsan.jobassignment.untils.DataFormatUntils.ge
  * Created by San on 02/27/2018.
  */
 public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefreshListener,GroupsAdapter.ListenerActionPopupMenu,BaseQuickAdapter.OnItemClickListener {
+    public static final String GROUP = "GROUP";
     private GroupsAdapter adapter;
     private List<Group> listGroup;
     private DialogPlus mDialogCreateGroup;
@@ -218,6 +221,7 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
     public void updateUi(){
         mAVLoadingDialog.show();
         final DatabaseReference dbReferenceListGroups = mDatabaseReferenceUsers.child(mCurrentUser.getUid());
+
         dbReferenceListGroups.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -308,7 +312,9 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
 
     @Override
     public void onInfo(Group group) {
-
+        Intent intent = new Intent(getContext(), GroupInfoActivity.class);
+        intent.putExtra(GROUP,  group);
+        startActivity(intent);
     }
 
     @Override

@@ -44,7 +44,7 @@ import vn.edu.hust.soict.khacsan.jobassignment.model.Work;
 import static vn.edu.hust.soict.khacsan.jobassignment.untils.Constant.GROUPID;
 import static vn.edu.hust.soict.khacsan.jobassignment.untils.Constant.USERID;
 
-public class TeamWorkingActivity extends AppCompatActivity implements View.OnClickListener {
+public class TeamWorkingActivity extends AppCompatActivity implements View.OnClickListener, WorkAdapter.catchEventItemWork {
 
     private RecyclerView mRcVListCVNhom, mRVListUsers;
     private FloatingActionButton mFabAddCVNhom;
@@ -55,7 +55,7 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
     private UsersAdapterSelect adapter;
     private DatabaseReference mDRListMember, mDatabaseReferenceUsers, mDatabaseReferenceGroup;
     private String mGroupId, mUserId;
-    private WorkAdapter mWorkAdapter;
+    private BaseQuickAdapter mWorkAdapter;
     private TextView mTextViewNotification;
 
     @Override
@@ -98,7 +98,7 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void setupListWorkPersonal() {
-        mWorkAdapter = new WorkAdapter(R.layout.item_work, null);
+        mWorkAdapter = new WorkPersonAdapter(R.layout.item_work_person,null);
         mDatabaseReferenceGroup.child("works").limitToLast(50).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -106,7 +106,9 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
                 if (work != null && work.getMembers().contains(mUserId)) {
                     mWorkAdapter.addData(work);
                 }
-
+                if (mWorkAdapter.getData().size() != 0) {
+                    mTextViewNotification.setVisibility(View.GONE);
+                } else mTextViewNotification.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -136,13 +138,17 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
 
 
     private void setupListWork() {
-        mWorkAdapter = new WorkAdapter(R.layout.item_work, null);
+        mWorkAdapter = new WorkAdapter(R.layout.item_work, null,this);
         mDatabaseReferenceGroup.child("works").limitToLast(50).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Work work = dataSnapshot.getValue(Work.class);
                 if (work != null)
                     mWorkAdapter.addData(work);
+                if (mWorkAdapter.getData().size() != 0) {
+                    mTextViewNotification.setVisibility(View.GONE);
+                } else mTextViewNotification.setVisibility(View.VISIBLE);
+
             }
 
             @Override
@@ -167,7 +173,6 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
         });
 
         mRcVListCVNhom.setAdapter(mWorkAdapter);
-
 
     }
 
@@ -301,7 +306,6 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
                     } else {
                         Work work = new Work(name, description, false, deadline);
                         for (Users user : mListUserSelect) work.addMember(user.getId());
-                        ;
 
                         work.setDateCreated(DateFormat.getDateTimeInstance().format(new Date()));
                         mDatabaseReferenceGroup.child("works").push().setValue(work)
@@ -346,5 +350,15 @@ public class TeamWorkingActivity extends AppCompatActivity implements View.OnCli
             mTextViewNotification.setVisibility(View.GONE);
         } else mTextViewNotification.setVisibility(View.VISIBLE);
         super.onResume();
+    }
+
+    @Override
+    public void onItemClick(Work work, int position) {
+        Log.d("HAHA", "onItemClick: "+position);
+    }
+
+    @Override
+    public void onClickButtonDelete(Work work, int position) {
+        Log.d("HAHA", "onClickButtonDelete: "+position);
     }
 }

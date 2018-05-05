@@ -1,5 +1,8 @@
 package vn.edu.hust.soict.khacsan.jobassignment.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
@@ -8,7 +11,7 @@ import java.util.ArrayList;
  * Created by San on 03/13/2018.
  */
 @IgnoreExtraProperties
-public class Group{
+public class Group implements Parcelable {
     private String id, name,admin,date;
     private ArrayList<String> members = new ArrayList<>();
 
@@ -20,6 +23,26 @@ public class Group{
         this.admin = admin;
         this.date = date;
     }
+
+    protected Group(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        admin = in.readString();
+        date = in.readString();
+        members = in.createStringArrayList();
+    }
+
+    public static final Creator<Group> CREATOR = new Creator<Group>() {
+        @Override
+        public Group createFromParcel(Parcel in) {
+            return new Group(in);
+        }
+
+        @Override
+        public Group[] newArray(int size) {
+            return new Group[size];
+        }
+    };
 
     public String getDate() {
         return date;
@@ -65,4 +88,17 @@ public class Group{
         members.add(member);
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(name);
+        parcel.writeString(admin);
+        parcel.writeString(date);
+        parcel.writeStringList(members);
+    }
 }

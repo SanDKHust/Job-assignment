@@ -13,7 +13,7 @@ import cc.cloudist.acplibrary.ACProgressFlower;
  * Created by San on 02/04/2018.
  */
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
     private ACProgressFlower mDialog;
 
     @Override
