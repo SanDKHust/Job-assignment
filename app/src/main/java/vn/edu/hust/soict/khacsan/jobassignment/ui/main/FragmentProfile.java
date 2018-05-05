@@ -144,6 +144,8 @@ public class FragmentProfile extends Fragment {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setHasFixedSize(true);
 
+        updateUI(FirebaseAuth.getInstance().getCurrentUser());
+
         return layout;
     }
 
@@ -250,7 +252,6 @@ public class FragmentProfile extends Fragment {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Log.i("HAHA", "setupButtonCamera:photoFile ");
                 Uri photoURI = FileProvider.getUriForFile(getContext(),
                         "com.example.android.fileprovider",
                         photoFile);

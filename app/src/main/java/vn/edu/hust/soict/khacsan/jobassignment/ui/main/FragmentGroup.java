@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -111,6 +112,11 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
         return layout;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateUi();
+    }
 
     private void setupArcMenu(ArcMenu menu) {
         menu.showTooltip(true);
@@ -214,11 +220,11 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
 
     @Override
     public void onRefresh() {
-        adapter.getData().clear();
         updateUi();
     }
 
     public void updateUi(){
+        adapter.getData().clear();
         mAVLoadingDialog.show();
         final DatabaseReference dbReferenceListGroups = mDatabaseReferenceUsers.child(mCurrentUser.getUid());
 
@@ -227,50 +233,28 @@ public class FragmentGroup extends Fragment implements SwipeRefreshLayout.OnRefr
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChild("groups")){
                     mTxtMessage.setVisibility(View.GONE);
-                    dbReferenceListGroups.child("groups").addChildEventListener(new ChildEventListener() {
+                    dbReferenceListGroups.child("groups").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                            final String id = dataSnapshot.getValue(String.class);
-                            if(id!= null) mDatabaseReferenceGroups.child(id).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Group group = dataSnapshot.getValue(Group.class);
-                                    if(group!=null) {
-                                        group.setId(id);
-                                        List<Group> groups = adapter.getData();
-                                        int i = 0;
-                                        for(; i < groups.size(); i++){
-                                            if(groups.get(i).getId().equals(id)){
-                                                adapter.setData(i,group);
-                                                break;
-                                            }
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                final String id = snapshot.getValue(String.class);
+                                if(id != null) mDatabaseReferenceGroups.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        Group group = dataSnapshot.getValue(Group.class);
+                                        if(group != null){
+                                            group.setId(id);
+                                            adapter.addData(group);
                                         }
-                                        if(i >= groups.size()) adapter.addData(group);
-                                        mAVLoadingDialog.hide();
-                                        if(refresh.isRefreshing()) refresh.setRefreshing(false);
                                     }
-                                }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    mAVLoadingDialog.hide();
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                        }
-
-                        @Override
-                        public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                                    }
+                                });
+                            }
+                            if(refresh.isRefreshing()) refresh.setRefreshing(false);
+                            mAVLoadingDialog.hide();
                         }
 
                         @Override

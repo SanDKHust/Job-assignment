@@ -72,14 +72,11 @@ public class MainActivity extends AppCompatActivity {
 //                    loadFragment(new FragmentPersonal());
                     return true;
                 case R.id.navigation_groups:
-
                     mViewPager.setCurrentItem(1);
-                    ((FragmentGroup)((ViewPagerAdapter)mViewPager.getAdapter()).getItem(1)).updateUi();
 //                    loadFragment(new FragmentGroup());
                     return true;
                 case R.id.navigation_profile:
                     mViewPager.setCurrentItem(2);
-                    ((FragmentProfile)((ViewPagerAdapter)mViewPager.getAdapter()).getItem(2)).updateUI(mAuth.getCurrentUser());
 //                    loadFragment(new FragmentProfile());
                     return true;
             }
@@ -112,14 +109,9 @@ public class MainActivity extends AppCompatActivity {
                     mNavigation.getMenu().getItem(0).setChecked(false);
                 }
 
-                if(position == 0){
-                    mNavigation.setSelectedItemId(R.id.navigation_personal);
-                }else if(position == 1){
-                    mNavigation.setSelectedItemId(R.id.navigation_groups);
-                }else mNavigation.setSelectedItemId(R.id.navigation_profile);
-
                 mNavigation.getMenu().getItem(position).setChecked(true);
                 prevMenuItem = mNavigation.getMenu().getItem(position);
+
             }
 
             @Override
